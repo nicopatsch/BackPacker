@@ -22,7 +22,7 @@ class Island {
     
 public:
     Island(unsigned int MaxVolume, unsigned NbBagsPerGen, Mutation MutationType);
-    void Merge(Island& OtherIsland);
+    void Absorb(Island& OtherIsland);
     
     void PrintIslandHistory(string FileName);
     

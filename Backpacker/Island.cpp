@@ -18,7 +18,7 @@ Island::Island(unsigned int MaxVolume_in, unsigned NbBagsPerGen_in, Mutation Mut
     CurrentGen.SetMutationType(MutationType);
 }
 
-void Island::Merge(Island& OtherIsland) {
+void Island::Absorb(Island& OtherIsland) {
     CurrentGen.Absorb(OtherIsland.GetCurrentGen());
     OtherIsland.EmptyIsland();
 }
