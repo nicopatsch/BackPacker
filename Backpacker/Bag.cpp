@@ -62,13 +62,14 @@ bool Bag::IsViable(int MaxVolume) {
 }
 
 void Bag::RandomSubstract() {
-    Content.erase(Content.begin() + rand() % Content.size());
+    Content.erase(Content.begin() + RandomVal(Content.size()));
 }
 void Bag::RandomAdd() {
     Content.push_back(Pool::GetInstance().PickRandom());
 }
 void Bag::RandomSubstitute() {
-    Content[rand() % Content.size()] = Pool::GetInstance().PickRandom();
+    int index = RandomVal(Content.size());
+    Content[index] = Pool::GetInstance().PickRandom();
 }
 
 void Bag::Mutate(Mutation MutationType) {
@@ -95,7 +96,7 @@ Bag Bag::Bag::Reproduce(Bag& Partner, Mutation MutationType) {
         }
         CurrItem++;
     }
-    Mutate(MutationType);
+    ChildBag.Mutate(MutationType);
     return ChildBag;
 }
 

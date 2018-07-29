@@ -12,6 +12,11 @@ size_type RandomVal(const int Max) {
     return drand48()*Max;
 }
 
+size_type RandomInt(const int Max, bool AllowZeros) {
+    if(AllowZeros) return rand() % Max;
+    else return max(1, rand() % Max);
+}
+
 Mutation::Mutation(float Substrac, float Add, float Substit) {
     SubstractionProbability = Substrac;
     AdditionProbability = Add;

@@ -17,13 +17,13 @@
 
 using namespace std;
 using size_type = float;
-const unsigned int MAX_NB_ITEMS_BAG = 20; //The maximum number of objects a bag can contain
+const unsigned int MAX_NB_ITEMS_BAG = 100; //The maximum number of objects a bag can contain
 const unsigned int MAX_ITEM_VALUE = 100;
 const unsigned int MAX_ITEM_VOLUME = 100;
-const unsigned int NB_ITEMS_IN_POOL = 10;
+const unsigned int NB_ITEMS_IN_POOL = 500;
 
 size_type RandomVal(const int Max);
-
+size_type RandomInt(const int Max, bool AllowZeros = false);
 
 struct Mutation {
     float SubstractionProbability;
