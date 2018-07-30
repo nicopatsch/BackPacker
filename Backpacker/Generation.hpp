@@ -42,11 +42,14 @@ public:
     
     Generation Select(const unsigned int MaxVolume, const unsigned int MaxNbBags);
     Generation Reproduce();
+    Generation Reproduce(int FirstIndex, int SecondIndex);
     void SetMutationType(Mutation MutationType_in);
     
     vector<Bag>& GetPopulation();
     void Absorb(Generation& OtherGen);
-    
+    Generation InterGenerationReproduce(Generation& OtherGen, int FirstIndex, int SecondIndex);
+    Generation InterGenerationReproduceMix(Generation& OtherGen);
+        
     pair<unsigned int, unsigned int> GetNbItemsPerBag();
     
 };

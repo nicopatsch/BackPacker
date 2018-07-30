@@ -77,15 +77,99 @@ Generation Generation::Select(const unsigned int MaxVolume, const unsigned int M
         }
         CurrBag++;
     }
+//    if(BestBags.GetPopulation().size() == 0) {
+//        throw "Empty new gen";
+//    }
     
     return BestBags;
 }
 
 Generation Generation::Reproduce() {
+    return Reproduce(0, (int)Population.size()-1);
+}
+
+Generation Generation::Reproduce(int FirstIndex, int SecondIndex) {
+    if(FirstIndex >= Population.size() || SecondIndex >= Population.size()
+       || FirstIndex > SecondIndex || FirstIndex < 0) {
+        throw "IndexOutOfRange";
+    }
+    int Bag1Index = 0;
+    int Bag2Index = 0;
+    
     Generation NewGen {};
     Bag ChildBag {};
     for(auto Bag1It = Population.begin(); Bag1It < Population.end(); Bag1It++) {
         for(auto Bag2It = Population.begin(); Bag2It < Population.end(); Bag2It++) {
+            if(Population.size() == 0) {
+                throw "Empty pop";
+            }
+            if(Bag1It->GetNumItems() == 0 || Bag2It->GetNumItems() == 0) {
+                throw "Empty bag";
+            }
+            ChildBag = Bag1It->Reproduce(*Bag2It, MutationType);
+            NewGen.AddBag(ChildBag);
+            Bag2Index++;
+        }
+        Bag1Index++;
+    }
+    NewGen.SetMutationType(MutationType);
+    return NewGen;
+}
+
+
+void Generation::Absorb(Generation& OtherGen){
+    Population.insert(Population.end(), std::make_move_iterator(OtherGen.GetPopulation().begin()), std::make_move_iterator(OtherGen.GetPopulation().end()));
+}
+
+
+Generation Generation::InterGenerationReproduceMix(Generation& OtherGen) {
+    
+    
+    //First half of each Gen reproduces with itself
+    Generation NewGen = Reproduce(0, (int)Population.size() / 2);
+    
+    for(int i=0; i<NewGen.GetPopulation().size(); i++) {
+        if(NewGen.GetPopulation()[i].GetNumItems() == 0) {
+            throw "Here";
+        }
+    }
+    
+    Generation SecondGenHalfRep = OtherGen.Reproduce(0, (int)OtherGen.GetPopulation().size() / 2);
+    NewGen.Absorb(SecondGenHalfRep);
+    
+    for(int i=0; i<NewGen.GetPopulation().size(); i++) {
+        if(NewGen.GetPopulation()[i].GetNumItems() == 0) {
+            throw "Here";
+        }
+    }
+    
+    //Second half reproduced with second half of other
+    Generation SecondHalfInterReproduced = InterGenerationReproduce(OtherGen, (int)OtherGen.GetPopulation().size() / 2, (int)min(OtherGen.GetPopulation().size(), Population.size())-1);
+    
+    //We combine the two
+    NewGen.Absorb(SecondHalfInterReproduced);
+    
+    for(int i=0; i<NewGen.GetPopulation().size(); i++) {
+        if(NewGen.GetPopulation()[i].GetNumItems() == 0) {
+            throw "Here";
+        }
+    }
+    
+    return NewGen;
+}
+
+
+Generation Generation::InterGenerationReproduce(Generation& OtherGen, int FirstIndex, int SecondIndex) {
+    
+    if(FirstIndex >= Population.size() || SecondIndex >= Population.size()
+       || FirstIndex >= OtherGen.GetPopulation().size() || SecondIndex >= OtherGen.GetPopulation().size() || FirstIndex > SecondIndex || FirstIndex < 0) {
+        throw "IndexOutOfRange";
+    }
+    
+    Generation NewGen {};
+    Bag ChildBag {};
+    for(auto Bag1It = Population.begin() + FirstIndex; Bag1It < Population.begin() + SecondIndex; Bag1It++) {
+        for(auto Bag2It = OtherGen.GetPopulation().begin() + FirstIndex; Bag2It < OtherGen.GetPopulation().begin() + SecondIndex; Bag2It++) {
             ChildBag = Bag1It->Reproduce(*Bag2It, MutationType);
             NewGen.AddBag(ChildBag);
         }
@@ -94,10 +178,6 @@ Generation Generation::Reproduce() {
     return NewGen;
 }
 
-
-void Generation::Absorb(Generation& OtherGen){
-    copy(OtherGen.GetPopulation().begin(), OtherGen.GetPopulation().end(), Population.begin());
-}
 
 vector<Bag>& Generation::GetPopulation() {
     return Population;

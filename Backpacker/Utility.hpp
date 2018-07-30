@@ -14,6 +14,7 @@
 #include <iostream>
 #include <vector>
 #include <math.h>
+#include <memory.h>
 
 using namespace std;
 using size_type = float;
@@ -23,7 +24,7 @@ const unsigned int MAX_ITEM_VOLUME = 100;
 const unsigned int NB_ITEMS_IN_POOL = 500;
 
 size_type RandomVal(const int Max);
-size_type RandomInt(const int Max, bool AllowZeros = false);
+int RandomInt(const int Max, bool AllowZeros = false);
 
 struct Mutation {
     float SubstractionProbability;

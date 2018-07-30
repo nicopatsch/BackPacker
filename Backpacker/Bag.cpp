@@ -8,6 +8,7 @@
 
 #include "Bag.hpp"
 #include "Pool.hpp"
+#include <algorithm>
 using namespace std;
 
 
@@ -62,14 +63,26 @@ bool Bag::IsViable(int MaxVolume) {
 }
 
 void Bag::RandomSubstract() {
-    Content.erase(Content.begin() + RandomVal(Content.size()));
+    if(Content.size() > 1) {
+        Content.erase(Content.begin() + RandomInt((int)Content.size()));
+    }
 }
 void Bag::RandomAdd() {
-    Content.push_back(Pool::GetInstance().PickRandom());
+    Item* pNewItem = Pool::GetInstance().PickRandom();
+    //While the item is already in the bag, take another one
+    while(find(Content.begin(), Content.end(), pNewItem) != Content.end()) {
+        pNewItem = Pool::GetInstance().PickRandom();
+    }
+    Content.push_back(pNewItem);
 }
 void Bag::RandomSubstitute() {
-    int index = RandomVal(Content.size());
-    Content[index] = Pool::GetInstance().PickRandom();
+    int index = RandomInt((int)Content.size());
+    Item* pNewItem = Pool::GetInstance().PickRandom();
+    //While the item is already in the bag, take another one
+    while(find(Content.begin(), Content.end(), pNewItem) != Content.end()) {
+        pNewItem = Pool::GetInstance().PickRandom();
+    }
+    Content[index] = pNewItem;
 }
 
 void Bag::Mutate(Mutation MutationType) {
@@ -84,7 +97,7 @@ void Bag::Mutate(Mutation MutationType) {
     }
 }
 
-Bag Bag::Bag::Reproduce(Bag& Partner, Mutation MutationType) {
+Bag Bag::Reproduce(Bag& Partner, Mutation MutationType) {
     Bag ChildBag;
     int CurrItem = 0;
     while(this->GetNumItems() > CurrItem || Partner.GetNumItems() > CurrItem) {

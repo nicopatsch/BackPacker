@@ -25,6 +25,9 @@ Generation Pool::GenerateRandomBags(unsigned int N) {
     for(int BagIndex = 0; BagIndex < N; BagIndex++) {
         Bag Individual {};
         unsigned int NumberOfItems = RandomInt(MAX_NB_ITEMS_BAG, false);
+        if(NumberOfItems <= 0) {
+            throw "Problem";
+        }
         for(int ItemIndex = 0; ItemIndex < NumberOfItems; ItemIndex++) {
             Individual.AddItem(GetItemByIndex(RandomVal(NumItems)));
         }
