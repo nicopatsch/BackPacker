@@ -23,14 +23,24 @@ const unsigned int MAX_ITEM_VALUE = 100;
 const unsigned int MAX_ITEM_VOLUME = 100;
 const unsigned int NB_ITEMS_IN_POOL = 500;
 
-size_type RandomVal(const int Max);
+size_type RandomVal(const float Max);
 int RandomInt(const int Max, bool AllowZeros = false);
 
 struct Mutation {
+    static constexpr float MaxMutationIncrement = 0.1;
+    static constexpr float MutationProbability = 0.05;
+    
     float SubstractionProbability;
     float AdditionProbability;
     float SubstitutionProbability;
     Mutation(float Substrac, float Add, float Substit);
+    Mutation();
+    
+    void Mutate();
+    
+    void MutateAddProb();
+    void MutateSubstracProb();
+    void MutateSubstitProb();
 };
 
 

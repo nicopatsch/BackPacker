@@ -22,6 +22,7 @@ void Pool::FillPool() {
 
 Generation Pool::GenerateRandomBags(unsigned int N) {
     Generation G {};
+    Mutation M;
     for(int BagIndex = 0; BagIndex < N; BagIndex++) {
         Bag Individual {};
         unsigned int NumberOfItems = RandomInt(MAX_NB_ITEMS_BAG, false);
@@ -31,6 +32,9 @@ Generation Pool::GenerateRandomBags(unsigned int N) {
         for(int ItemIndex = 0; ItemIndex < NumberOfItems; ItemIndex++) {
             Individual.AddItem(GetItemByIndex(RandomVal(NumItems)));
         }
+        M = { RandomVal(1.), RandomVal(1.), RandomVal(1.) };
+        cout << M.AdditionProbability << ", " << M.SubstitutionProbability << ", " << M.SubstractionProbability << "\n";
+        Individual.SetMutationType(M);
         G.AddBag(Individual);
     }
     return G;

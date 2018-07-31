@@ -15,7 +15,7 @@
 Island::Island(unsigned int MaxVolume_in, unsigned NbBagsPerGen_in, Mutation MutationType) : MaxVolume { MaxVolume_in }, NbBagsPerGen { NbBagsPerGen_in } {
     CurrentGen = Pool::GetInstance().GenerateRandomBags(NbBagsPerGen_in);
     Pool::GetInstance().PrintContent();
-    CurrentGen.SetMutationType(MutationType);
+    //CurrentGen.SetMutationType(MutationType); REMOVE
 }
 
 void Island::Absorb(Island& OtherIsland) {
@@ -64,7 +64,7 @@ void Island::PrintIslandHistory(string FileName) {
     for(int GenIndex = 0; GenIndex < History.size(); GenIndex++) {
         
         CurrentGenStats = History[GenIndex];
-        ResultFile << GenIndex << "," << CurrentGenStats.MaxValue << "," << CurrentGenStats.AverageValue << "," << CurrentGenStats.MaxNbBags << "," << CurrentGenStats.AverageNbBags << "\n";
+        ResultFile << GenIndex << "," << CurrentGenStats.MaxValue << "," << CurrentGenStats.AverageValue << "," << CurrentGenStats.MaxNbItemsPerBag << "," << CurrentGenStats.AverageNbItemsPerBag << "\n";
 
     }
     
@@ -73,7 +73,7 @@ void Island::PrintIslandHistory(string FileName) {
 
 
 
-void Island::PrintAllIslandsHistory(string FileName, vector<Island*> Islands) {
+void Island::PrintAllIslandsHistory(string FileName, vector<shared_ptr<Island>> Islands) {
     ofstream ResultFile;
     ResultFile.open(FileName);
     
@@ -81,9 +81,12 @@ void Island::PrintAllIslandsHistory(string FileName, vector<Island*> Islands) {
     ResultFile << "Index of Gen, ";
     for(int i = 0; i < Islands.size(); i++) {
         ResultFile << "I#" << i+1 << ": Max Value of Gen, ";
-        ResultFile << "I#" << i+1 << ": Average Value of Gen, ";
+        ResultFile << "I#" << i+1 << ": Average Value, ";
+        ResultFile << "I#" << i+1 << ": Standard Deviation of Value, ";
+        
         ResultFile << "I#" << i+1 << ": Max nb of items / bag, ";
-        ResultFile << "I#" << i+1 << ": Avg nb of items / bag,";
+        ResultFile << "I#" << i+1 << ": Avg nb of items,";
+        ResultFile << "I#" << i+1 << ": Standard Deviation nb of items, ";
     }
     ResultFile << "\n";
     
@@ -100,10 +103,58 @@ void Island::PrintAllIslandsHistory(string FileName, vector<Island*> Islands) {
                 CurrentGenStats = (*IslandIt)->History[GenIndex];
                 NbIslandsStillRuning++;
                 
-                ResultFile << CurrentGenStats.MaxValue << "," << CurrentGenStats.AverageValue << "," << CurrentGenStats.MaxNbBags << "," << CurrentGenStats.AverageNbBags << ",";
+                ResultFile
+                << CurrentGenStats.MaxValue << ","
+                << CurrentGenStats.AverageValue << ","
+                << CurrentGenStats.StdVarValue << ","
+                
+                << CurrentGenStats.MaxNbItemsPerBag << ","
+                << CurrentGenStats.AverageNbItemsPerBag << ","
+                << CurrentGenStats.StdVarNbItemsPerBag << ",";
             }
             else {
-                ResultFile << " , , , ,";
+                ResultFile << " , , , , , , ";
+            }
+            
+        }
+        ResultFile << "\n";
+        GenIndex++;
+    }
+}
+
+void Island::PrintAllIslandsHistoryValue(string FileName, vector<shared_ptr<Island>> Islands) {
+    ofstream ResultFile;
+    ResultFile.open(FileName);
+    
+    //Print all titles
+    ResultFile << "Index of Gen, ";
+    for(int i = 0; i < Islands.size(); i++) {
+        ResultFile << "I#" << i+1 << ": Max Value of Gen, ";
+        ResultFile << "I#" << i+1 << ": Average Value, ";
+        ResultFile << "I#" << i+1 << ": Standard Deviation of Value, ";
+    }
+    ResultFile << "\n";
+    
+    int GenIndex = 0;
+    int NbIslandsStillRuning = (int)Islands.size();
+    GenerationStats CurrentGenStats;
+    
+    while(NbIslandsStillRuning > 0) {
+        ResultFile << GenIndex << ",";
+        NbIslandsStillRuning = 0;
+        
+        for(auto IslandIt = Islands.begin(); IslandIt < Islands.end(); IslandIt++) {
+            if((*IslandIt)->History.size() > GenIndex) {
+                CurrentGenStats = (*IslandIt)->History[GenIndex];
+                NbIslandsStillRuning++;
+                
+                ResultFile
+                << CurrentGenStats.MaxValue << ","
+                << CurrentGenStats.AverageValue << ","
+                << CurrentGenStats.StdVarValue << ",";
+            }
+            else {
+                ResultFile << " , , , ";
             }
             
         }
@@ -142,6 +193,46 @@ void Island::PrintAllIslandsHistoryShort(string FileName, vector<shared_ptr<Isla
             }
             else {
                 ResultFile << " ,";
+            }
+            
+        }
+        ResultFile << "\n";
+        GenIndex++;
+    }
+}
+
+
+void Island::PrintAllIslandsHistoryMutations(string FileName, vector<shared_ptr<Island>> Islands) {
+    ofstream ResultFile;
+    ResultFile.open(FileName);
+    
+    //Print all titles
+    ResultFile << "Index of Gen, ";
+    for(int i = 0; i < Islands.size(); i++) {
+        ResultFile << "I#" << i+1 << ": Average AdditionProb of Gen, Average SubstractionProb of Gen, Average SubstitutionProb of Gen, ";
+    }
+    ResultFile << "\n";
+    
+    int GenIndex = 0;
+    int NbIslandsStillRuning = (int)Islands.size();
+    GenerationStats CurrentGenStats;
+    
+    while(NbIslandsStillRuning > 0) {
+        ResultFile << GenIndex << ",";
+        NbIslandsStillRuning = 0;
+        
+        for(auto IslandIt = Islands.begin(); IslandIt < Islands.end(); IslandIt++) {
+            if((*IslandIt)->History.size() > GenIndex) {
+                CurrentGenStats = (*IslandIt)->History[GenIndex];
+                NbIslandsStillRuning++;
+                
+                ResultFile
+                << CurrentGenStats.AverageMutationType.AdditionProbability << ","
+                << CurrentGenStats.AverageMutationType.SubstractionProbability << ","
+                << CurrentGenStats.AverageMutationType.SubstitutionProbability << ",";
+            }
+            else {
+                ResultFile << " , , , ";
             }
             
         }

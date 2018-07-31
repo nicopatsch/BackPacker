@@ -17,13 +17,14 @@ class Bag {
     vector<Item*> Content;
     size_type TotalVolume;
     size_type TotalValue;
+    Mutation MutationType;
     
 public:
     size_type GetTotalVolume() const;
     size_type GetTotalValue() const;
     unsigned long GetNumItems() const;
     Item* GetItemByIndex(unsigned int Index);
-    Bag() : TotalVolume { }, TotalValue { }, Content { } { }
+    Bag() : TotalVolume { }, TotalValue { }, Content { }, MutationType { } { }
     void PrintContent() const;
     
     void PrintPerformence() const;
@@ -36,9 +37,10 @@ public:
     void RandomAdd();
     void RandomSubstitute();
     
-    void Mutate(Mutation MutationType);
-    
-    Bag Reproduce(Bag& Partner, Mutation MutationType);
+    void Mutate();
+    void SetMutationType(Mutation MutationType_in);
+    Mutation GetMutationType();
+    Bag Reproduce(Bag& Partner);
     
 };
 

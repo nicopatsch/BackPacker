@@ -25,8 +25,10 @@ public:
     void Absorb(Island& OtherIsland);
     
     void PrintIslandHistory(string FileName);
-    static void PrintAllIslandsHistory(string FileName, vector<Island*> Islands);
+    static void PrintAllIslandsHistory(string FileName, vector<shared_ptr<Island>> Islands);
+    static void PrintAllIslandsHistoryValue(string FileName, vector<shared_ptr<Island>> Islands);
     static void PrintAllIslandsHistoryShort(string FileName, vector<shared_ptr<Island>> Islands);
+    static void PrintAllIslandsHistoryMutations(string FileName, vector<shared_ptr<Island>> Islands);
     void DevelopDuring(unsigned int NbGenerations);
     Generation& GetCurrentGen();
 };

@@ -18,34 +18,58 @@ Mutation HighMutation = { 1, 1, 1 };
 
 void FirstExperiment() {
     
-    Island Island1 = Island(MaxVolume, NbBagsPerGen, ModerateMutation);
-    Island1.DevelopDuring(1000);
-    Island1.PrintIslandHistory("/Users/nicopatsch/OneDrive - USherbrooke/@PROGRAMMING/Backpacker/results.txt");
+    shared_ptr<Island> Island1 = make_shared<Island>(MaxVolume, NbBagsPerGen, ModerateMutation);
+    Island1->DevelopDuring(2000);
+    
+    Island::PrintAllIslandsHistoryMutations("/Users/nicopatsch/OneDrive - USherbrooke/@PROGRAMMING/Backpacker/FirstExperimentResultsMutations.txt", { Island1 });
+    Island::PrintAllIslandsHistoryShort("/Users/nicopatsch/OneDrive - USherbrooke/@PROGRAMMING/Backpacker/FirstExperimentResults.txt", { Island1 });
     
 }
 
 void SecondExperiment() {
     
-//    Island Island1 = Island(MaxVolume, NbBagsPerGen, HighMutation);
-//    Island Island2 = Island(MaxVolume, NbBagsPerGen, ModerateMutation);
-//    Island Island3 = Island(MaxVolume, NbBagsPerGen, LowMutation);
-//    Island Island4 = Island(MaxVolume, NbBagsPerGen, NoMutation);
-//    
-//    Island1.DevelopDuring(200);
-//    Island2.DevelopDuring(200);
-//    Island3.DevelopDuring(200);
-//    Island4.DevelopDuring(200);
-//
-//    Island1.Absorb(Island3);
-//    Island2.Absorb(Island4);
-//
-//    Island1.DevelopDuring(200);
-//    Island2.DevelopDuring(200);
-//
-//    Island1.Absorb(Island2);
-//    Island1.DevelopDuring(200);
-//
-//    Island::PrintAllIslandsHistoryShort("/Users/nicopatsch/OneDrive - USherbrooke/@PROGRAMMING/Backpacker/SecondExperimentResults.txt", { &Island1, &Island2, &Island3, &Island4 });
+    shared_ptr<Island> Island1 = make_shared<Island>(MaxVolume, NbBagsPerGen, HighMutation);
+    shared_ptr<Island> Island2 = make_shared<Island>(MaxVolume, NbBagsPerGen, ModerateMutation);
+    shared_ptr<Island> Island3 = make_shared<Island>(MaxVolume, NbBagsPerGen, LowMutation);
+    shared_ptr<Island> Island4 = make_shared<Island>(MaxVolume, NbBagsPerGen, NoMutation);
+    shared_ptr<Island> Island5 = make_shared<Island>(MaxVolume, NbBagsPerGen, HighMutation);
+    shared_ptr<Island> Island6 = make_shared<Island>(MaxVolume, NbBagsPerGen, ModerateMutation);
+    shared_ptr<Island> Island7 = make_shared<Island>(MaxVolume, NbBagsPerGen, LowMutation);
+    shared_ptr<Island> Island8 = make_shared<Island>(MaxVolume, NbBagsPerGen, NoMutation);
+    
+    const int DevelopmentDuration = 200;
+    
+    Island1->DevelopDuring(DevelopmentDuration);
+    Island2->DevelopDuring(DevelopmentDuration);
+    Island3->DevelopDuring(DevelopmentDuration);
+    Island4->DevelopDuring(DevelopmentDuration);
+    Island5->DevelopDuring(DevelopmentDuration);
+    Island6->DevelopDuring(DevelopmentDuration);
+    Island7->DevelopDuring(DevelopmentDuration);
+    Island8->DevelopDuring(DevelopmentDuration);
+    
+    Island1->Absorb(*Island5);
+    Island2->Absorb(*Island6);
+    Island3->Absorb(*Island7);
+    Island4->Absorb(*Island8);
+    
+    Island1->DevelopDuring(DevelopmentDuration);
+    Island2->DevelopDuring(DevelopmentDuration);
+    Island3->DevelopDuring(DevelopmentDuration);
+    Island4->DevelopDuring(DevelopmentDuration);
+
+    Island1->Absorb(*Island3);
+    Island2->Absorb(*Island4);
+
+    Island1->DevelopDuring(DevelopmentDuration);
+    Island2->DevelopDuring(DevelopmentDuration);
+
+    Island1->Absorb(*Island2);
+    Island1->DevelopDuring(DevelopmentDuration);
+
+    Island::PrintAllIslandsHistoryValue("/Users/nicopatsch/OneDrive - USherbrooke/@PROGRAMMING/Backpacker/SecondExperimentResults.txt", { Island1, Island2, Island3, Island4, Island5, Island6, Island7, Island8 });
+    Island::PrintAllIslandsHistoryShort("/Users/nicopatsch/OneDrive - USherbrooke/@PROGRAMMING/Backpacker/SecondExperimentResultsShort.txt", { Island1, Island2, Island3, Island4, Island5, Island6, Island7, Island8 });
+    Island::PrintAllIslandsHistoryMutations("/Users/nicopatsch/OneDrive - USherbrooke/@PROGRAMMING/Backpacker/SecondExperimentResultsMutations.txt", { Island1, Island2, Island3, Island4, Island5, Island6, Island7, Island8 });
 
     
 }
@@ -69,7 +93,9 @@ void ThirdExperiment() {
         VariousIslands[i]->DevelopDuring(Duration);
     }
     
-    Island::PrintAllIslandsHistoryShort("/Users/nicopatsch/OneDrive - USherbrooke/@PROGRAMMING/Backpacker/ThirdExperimentResults.txt", VariousIslands);
+    Island::PrintAllIslandsHistoryShort("/Users/nicopatsch/OneDrive - USherbrooke/@PROGRAMMING/Backpacker/ThirdExperimentResultsShort.txt", VariousIslands);
+    Island::PrintAllIslandsHistoryValue("/Users/nicopatsch/OneDrive - USherbrooke/@PROGRAMMING/Backpacker/ThirdExperimentResultsValue.txt", VariousIslands);
+    Island::PrintAllIslandsHistoryShort("/Users/nicopatsch/OneDrive - USherbrooke/@PROGRAMMING/Backpacker/ThirdExperimentResultsFull.txt", VariousIslands);
     
     
 }
@@ -78,7 +104,7 @@ void ThirdExperiment() {
 
 int main(int argc, const char * argv[]) {
     
-    ThirdExperiment();
+    FirstExperiment();
     
     return 0;
     

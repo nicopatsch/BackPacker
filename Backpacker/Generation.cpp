@@ -8,12 +8,7 @@
 
 #include "Generation.hpp"
 
-
-Generation::Generation() : Population {}, MutationType { 0, 0, 0 } {
-    
-}
-
-Generation::Generation(Mutation MutationType_in) : Population {}, MutationType { MutationType_in } {
+Generation::Generation() : Population {} {
     
 }
 
@@ -32,17 +27,48 @@ void Generation::PrintGenerationCompact() {
 GenerationStats Generation::GetGenerationStats() {
     size_type SumValue = 0;
     size_type MaxValue = 0;
+    size_type SumSquaresValue = 0;
+    
     float SumNb = 0;
     unsigned long MaxNb = 0;
+    float SumSquaresNb = 0;
     
+    Mutation MaxMutationType = { };
+    Mutation AvgMutationType = { };
+    
+    Mutation BagMutationType;
     for(auto BagIt = Population.begin(); BagIt<Population.end(); BagIt++) {
         if(MaxValue < BagIt->GetTotalValue()) MaxValue = BagIt->GetTotalValue();
         SumValue += BagIt->GetTotalValue();
+        SumSquaresValue += pow(BagIt->GetTotalValue(), 2);
+        
         if(MaxNb < BagIt->GetNumItems()) MaxNb = BagIt->GetNumItems();
         SumNb += BagIt->GetNumItems();
+        SumSquaresNb += pow(BagIt->GetNumItems(), 2);
+        
+        BagMutationType = BagIt->GetMutationType();
+        if(MaxMutationType.AdditionProbability < BagMutationType.AdditionProbability) {
+            MaxMutationType.AdditionProbability = BagMutationType.AdditionProbability;
+        }
+        if(MaxMutationType.SubstractionProbability < BagMutationType.SubstractionProbability) {
+            MaxMutationType.SubstractionProbability = BagMutationType.SubstractionProbability;
+        }
+        if(MaxMutationType.SubstitutionProbability < BagMutationType.SubstitutionProbability) {
+            MaxMutationType.SubstitutionProbability = BagMutationType.SubstitutionProbability;
+        }
+        AvgMutationType.AdditionProbability += BagMutationType.AdditionProbability;
+        AvgMutationType.SubstractionProbability += BagMutationType.SubstractionProbability;
+        AvgMutationType.SubstitutionProbability += BagMutationType.SubstitutionProbability;
     }
     
-    return GenerationStats(MaxValue, SumValue/Population.size(), (unsigned int)MaxNb, SumNb/Population.size());
+    float AvgValue = SumValue/Population.size();
+    float AvgNb = SumNb/Population.size();
+    
+    AvgMutationType.AdditionProbability /= (float)Population.size();
+    AvgMutationType.SubstractionProbability /= (float)Population.size();
+    AvgMutationType.SubstitutionProbability /= (float)Population.size();
+    
+    return GenerationStats(MaxValue, AvgValue, SumSquaresValue/Population.size() - pow(AvgValue,2), (unsigned int)MaxNb, AvgNb, SumNb/Population.size() - pow(AvgNb,2), MaxMutationType, AvgMutationType);
 }
 
 void Generation::PrintGenerationFull() {
@@ -69,7 +95,6 @@ Generation Generation::Select(const unsigned int MaxVolume, const unsigned int M
     
     //Now that the bags are sorted in decreasing order of total value, we take the best ones.
     Generation BestBags {};
-    BestBags.SetMutationType(MutationType);
     unsigned int CurrBag = 0;
     while(BestBags.GetNbBags() < MaxNbBags && Population.size() > CurrBag) {
         if(Population[CurrBag].GetTotalVolume() <= MaxVolume) {
@@ -89,14 +114,16 @@ Generation Generation::Reproduce() {
 }
 
 Generation Generation::Reproduce(int FirstIndex, int SecondIndex) {
+    Generation NewGen {};
+    
     if(FirstIndex >= Population.size() || SecondIndex >= Population.size()
        || FirstIndex > SecondIndex || FirstIndex < 0) {
-        throw "IndexOutOfRange";
+        return NewGen;
+        //throw "IndexOutOfRange";
     }
     int Bag1Index = 0;
     int Bag2Index = 0;
     
-    Generation NewGen {};
     Bag ChildBag {};
     for(auto Bag1It = Population.begin(); Bag1It < Population.end(); Bag1It++) {
         for(auto Bag2It = Population.begin(); Bag2It < Population.end(); Bag2It++) {
@@ -106,13 +133,13 @@ Generation Generation::Reproduce(int FirstIndex, int SecondIndex) {
             if(Bag1It->GetNumItems() == 0 || Bag2It->GetNumItems() == 0) {
                 throw "Empty bag";
             }
-            ChildBag = Bag1It->Reproduce(*Bag2It, MutationType);
+            ChildBag = Bag1It->Reproduce(*Bag2It);
             NewGen.AddBag(ChildBag);
             Bag2Index++;
         }
         Bag1Index++;
     }
-    NewGen.SetMutationType(MutationType);
+    //NewGen.SetMutationType(MutationType); REMOVE
     return NewGen;
 }
 
@@ -155,6 +182,13 @@ Generation Generation::InterGenerationReproduceMix(Generation& OtherGen) {
         }
     }
     
+//    Mutation NewMutationType = {
+//        (MutationType.AdditionProbability + OtherGen.MutationType.AdditionProbability) / 2,
+//        (MutationType.SubstractionProbability + OtherGen.MutationType.SubstractionProbability) / 2,
+//        (MutationType.SubstitutionProbability + OtherGen.MutationType.SubstitutionProbability) / 2
+//    }; REMOVE
+     //NewGen.SetMutationType(NewMutationType); REMOVE
+    
     return NewGen;
 }
 
@@ -170,11 +204,11 @@ Generation Generation::InterGenerationReproduce(Generation& OtherGen, int FirstI
     Bag ChildBag {};
     for(auto Bag1It = Population.begin() + FirstIndex; Bag1It < Population.begin() + SecondIndex; Bag1It++) {
         for(auto Bag2It = OtherGen.GetPopulation().begin() + FirstIndex; Bag2It < OtherGen.GetPopulation().begin() + SecondIndex; Bag2It++) {
-            ChildBag = Bag1It->Reproduce(*Bag2It, MutationType);
+            ChildBag = Bag1It->Reproduce(*Bag2It);
             NewGen.AddBag(ChildBag);
         }
     }
-    NewGen.SetMutationType(MutationType);
+    //NewGen.SetMutationType(MutationType);
     return NewGen;
 }
 
@@ -182,7 +216,7 @@ Generation Generation::InterGenerationReproduce(Generation& OtherGen, int FirstI
 vector<Bag>& Generation::GetPopulation() {
     return Population;
 }
-
-void Generation::SetMutationType(Mutation MutationType_in) {
-    MutationType = MutationType_in;
-}
+//
+//void Generation::SetMutationType(Mutation MutationType_in) {
+//    MutationType = MutationType_in;
+//} REMOVE

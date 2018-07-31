@@ -85,19 +85,28 @@ void Bag::RandomSubstitute() {
     Content[index] = pNewItem;
 }
 
-void Bag::Mutate(Mutation MutationType) {
-    if(drand48() < MutationType.SubstractionProbability) {
+void Bag::Mutate() {
+    if(RandomVal(1) < MutationType.SubstractionProbability) {
         RandomSubstract();
     }
-    if(drand48() < MutationType.AdditionProbability) {
+    if(RandomVal(1) < MutationType.AdditionProbability) {
         RandomAdd();
     }
-    if(drand48() < MutationType.SubstitutionProbability) {
+    if(RandomVal(1) < MutationType.SubstitutionProbability) {
         RandomSubstitute();
     }
+    MutationType.Mutate();
 }
 
-Bag Bag::Reproduce(Bag& Partner, Mutation MutationType) {
+void Bag::SetMutationType(Mutation MutationType_in) {
+    MutationType = MutationType_in;
+}
+
+Mutation Bag::GetMutationType() {
+    return MutationType;
+}
+
+Bag Bag::Reproduce(Bag& Partner) {
     Bag ChildBag;
     int CurrItem = 0;
     while(this->GetNumItems() > CurrItem || Partner.GetNumItems() > CurrItem) {
@@ -109,7 +118,10 @@ Bag Bag::Reproduce(Bag& Partner, Mutation MutationType) {
         }
         CurrItem++;
     }
-    ChildBag.Mutate(MutationType);
+    
+    //We inherit the mutation type of only one of the parents, not an average of the 2, orelse we will completely lose the benefits of that specific value of the mutation type.
+    ChildBag.SetMutationType(MutationType);
+    ChildBag.Mutate();
     return ChildBag;
 }
 
