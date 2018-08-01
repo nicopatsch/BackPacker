@@ -41,6 +41,25 @@ struct Mutation {
     void MutateAddProb();
     void MutateSubstracProb();
     void MutateSubstitProb();
+    
+    
+    friend std::ostream& operator<<(std::ostream& os, const Mutation& TheMutation)
+    {
+        // write out individual members of s with an end of line between each one
+        os << TheMutation.AdditionProbability<< '\n';
+        os << TheMutation.SubstractionProbability << '\n';
+        os << TheMutation.SubstitutionProbability;
+        
+        return os;
+    }
+    
+    // Extraction operator
+    friend std::istream& operator>>(std::istream& is, Mutation& TheMutation)
+    {
+        // read in individual members of s
+        is >> TheMutation.AdditionProbability >> TheMutation.SubstractionProbability >> TheMutation.SubstitutionProbability;
+        return is;
+    }
 };
 
 

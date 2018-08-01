@@ -12,7 +12,12 @@
 #include <iostream>
 
 
-Island::Island(unsigned int MaxVolume_in, unsigned NbBagsPerGen_in, Mutation MutationType) : MaxVolume { MaxVolume_in }, NbBagsPerGen { NbBagsPerGen_in } {
+Island::Island() : Island(0, 0){
+    
+}
+
+
+Island::Island(unsigned int MaxVolume_in, unsigned NbBagsPerGen_in) : MaxVolume { MaxVolume_in }, NbBagsPerGen { NbBagsPerGen_in } {
     CurrentGen = Pool::GetInstance().GenerateRandomBags(NbBagsPerGen_in);
     Pool::GetInstance().PrintContent();
     //CurrentGen.SetMutationType(MutationType); REMOVE
@@ -239,4 +244,103 @@ void Island::PrintAllIslandsHistoryMutations(string FileName, vector<shared_ptr<
         ResultFile << "\n";
         GenIndex++;
     }
+}
+
+
+//template <class ... Args>
+//void Island::PrintAllIslandsHistory(string FileName, vector<shared_ptr<Island>> Islands) {
+//    
+//    ofstream ResultFile;
+//    ResultFile.open(FileName);
+//    
+//    //Print all the necesary titles
+//    ResultFile << "Index of Gen, ";
+//    GenerationStats::PrintTitle<Args...>(ResultFile);
+//    ResultFile << "\n";
+//    
+//    int GenIndex = 0;
+//    int NbIslandsStillRuning = (int)Islands.size();
+//    GenerationStats CurrentGenStats;
+//    
+//    while(NbIslandsStillRuning > 0) {
+//        ResultFile << GenIndex << ",";
+//        NbIslandsStillRuning = 0;
+//        
+//        for(auto IslandIt = Islands.begin(); IslandIt < Islands.end(); IslandIt++) {
+//            if((*IslandIt)->History.size() > GenIndex) {
+//                CurrentGenStats = (*IslandIt)->History[GenIndex];
+//                NbIslandsStillRuning++;
+//                
+//                CurrentGenStats.PrintContent<Args...>(ResultFile);
+//            }
+//            
+//        }
+//        ResultFile << "\n";
+//        GenIndex++;
+//    }
+//    
+//    
+//    
+//    
+//    cout << "Impression de " << sizeof...(Args) << " parametres: ";
+//    print_(std::forward<Args>(args)...);
+//    }
+//}
+//
+//
+//
+//
+
+
+//char* serialiser_brut(
+//
+//char* Island::serialiser_brut(char *dest) {
+//    auto sznom = min<int>(nom.size(), SZ_NOM);
+//    copy(begin(nom), begin(nom) + sznom, dest);
+//    //...??
+//    dest += SZ_NOM;
+//    dest = ::serialiser_brut(pos.x, dest);
+//    dest = ::serialiser_brut(pos.y, dest);
+//    dest = ::serialiser_brut(pos.z, dest);
+//    dest = ::serialiser_brut(puanteur, dest);
+//    dest = ::serialiser_brut(force, dest);
+//    dest = ::serialiser_brut(static_cast<char>(force), dest);
+//    return dest;
+//}
+//         
+//static const char* Island::deserialiser_brut(const char *src, Island &dest) {
+//    char nom_[SZ_NOM +1] {};
+//    copy(src, src + SZ_NOM, begin(nom_));
+//    string nom = nom_;
+//    int x;
+//    copy(src, src + sizeof x, reinterpret_cast<char*>(&x));
+//}
+
+
+
+void Island::AddGenerationStats(GenerationStats GS) {
+    History.push_back(GS);
+}
+
+GenerationStats Island::GetStatsOfGeneration(int i) const {
+    return History[i];
+}
+
+void Island::SaveIslandToFile(string FileName) {
+    
+    ofstream BackupFile;
+    BackupFile.open(FileName);
+    
+    BackupFile << *this;
+    BackupFile.close();
+}
+
+
+void Island::ReadIslandFromFile(string FileName) {
+    ifstream SourceFile;
+    SourceFile.open(FileName);
+    
+    SourceFile >> *this;
+    SourceFile.close();
+    
 }

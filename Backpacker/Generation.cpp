@@ -220,3 +220,121 @@ vector<Bag>& Generation::GetPopulation() {
 //void Generation::SetMutationType(Mutation MutationType_in) {
 //    MutationType = MutationType_in;
 //} REMOVE
+
+
+
+
+template<int N, class ... Types>
+void GenerationStats::PrintTitles(ostream& OutFile) {
+    
+    PrintTitle<type_at<N, Types...>::type>(OutFile);
+    PrintTitle<N-1, Types...>(OutFile);
+}
+
+template<>
+void GenerationStats::PrintTitles<-1>(ostream& OutFile) {
+    //End of compile time loop, do nothing
+}
+
+template<class ... Types>
+void GenerationStats::PrintTitle(ostream& OutFile) {
+    const int NumberOfTypes = sizeof...(Types);
+    
+    return PrintTitle<type_at<NumberOfTypes, Types...>::type, Types...>(OutFile);
+}
+
+
+
+//template<int N, class ... Types>
+//void GenerationStats::PrintContent(ostream& OutFile) {
+//
+//    PrintContent<type_at<N, Types...>::type>(OutFile);
+//    PrintContent<N-1, Types...>(OutFile);
+//}
+//
+//template<>
+//void GenerationStats::PrintContent<-1>(ostream& OutFile) {
+//    //End of compile time loop, do nothing
+//}
+//
+//template<class ... Types>
+//void GenerationStats::PrintContent(ostream& OutFile) {
+//    const int NumberOfTypes = sizeof...(Types);
+//
+//    return PrintContent<type_at<NumberOfTypes, Types...>::type>(OutFile);
+//}
+//
+
+
+
+//
+//
+//template<>
+//struct GenerationStats::PrintTitle<
+//GenerationStats::GenerationStatsTraits::MaxValue_type
+//>(ostream& OutFile) {
+//    OutFile << "Maximum value of generation, ";
+//}
+//
+//
+////TRANSFORM IT IN CLASSES like traits ? (see class notes)
+//template<>
+//void GenerationStats::PrintTitle<
+//GenerationStats::GenerationStatsTraits::MaxValue_type
+//>(ostream& OutFile) {
+//    OutFile << "Maximum value of generation, ";
+//}
+//
+//
+//template<>
+//void GenerationStats::PrintTitle<
+//GenerationStats::GenerationStatsTraits::AverageValue_type
+//>(ostream& OutFile) {
+//    OutFile << "Average value of generation, ";
+//}
+//
+//template<>
+//void GenerationStats::PrintTitle<
+//GenerationStats::GenerationStatsTraits::StdVarValue_type
+//>(ostream& OutFile) {
+//    OutFile << "Standard deviation of generation, ";
+//}
+//
+//template<>
+//void GenerationStats::PrintTitle<
+//GenerationStats::GenerationStatsTraits::MaxNbItemsPerBag_type
+//>(ostream& OutFile) {
+//    OutFile << "Maximum number of items per bag, ";
+//}
+//
+//template<>
+//void GenerationStats::PrintTitle<
+//GenerationStats::GenerationStatsTraits::AverageNbItemsPerBag_type
+//>(ostream& OutFile) {
+//    OutFile << "Average number of items per bag, ";
+//}
+//
+//template<>
+//void GenerationStats::PrintTitle<
+//GenerationStats::GenerationStatsTraits::StdVarNbItemsPerBag_type
+//>(ostream& OutFile) {
+//    OutFile << "Standard deviation nb items, ";
+//}
+//
+//template<>
+//void GenerationStats::PrintTitle<
+//GenerationStats::GenerationStatsTraits::MaxMutationType_type
+//>(ostream& OutFile) {
+//    OutFile << "Max Add value of Mutation, ";
+//    OutFile << "Max Substract value of Mutation, ";
+//    OutFile << "Max Substit value of Mutation, ";
+//}
+//
+//template<>
+//void GenerationStats::PrintTitle<
+//GenerationStats::GenerationStatsTraits::AverageMutationType_type
+//>(ostream& OutFile) {
+//    OutFile << "Average Add value of Mutation, ";
+//    OutFile << "Average Substract value of Mutation, ";
+//    OutFile << "Average Substit value of Mutation, ";
+//}

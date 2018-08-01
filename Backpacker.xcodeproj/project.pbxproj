@@ -286,7 +286,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 83Y87M5R4Z;
-				HEADER_SEARCH_PATHS = /Users/nicopatsch/boost_1_67_0/include;
+				HEADER_SEARCH_PATHS = "/Users/nicopatsch/boost_1_67_0/include/**";
 				"HEADER_SEARCH_PATHS[arch=*]" = "";
 				LIBRARY_SEARCH_PATHS = /Users/nicopatsch/boost_1_67_0/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -300,7 +300,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 83Y87M5R4Z;
-				HEADER_SEARCH_PATHS = /Users/nicopatsch/boost_1_67_0/include;
+				HEADER_SEARCH_PATHS = "/Users/nicopatsch/boost_1_67_0/include/**";
 				LIBRARY_SEARCH_PATHS = /Users/nicopatsch/boost_1_67_0/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
