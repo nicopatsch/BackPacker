@@ -27,8 +27,8 @@ size_type RandomVal(const float Max);
 int RandomInt(const int Max, bool AllowZeros = false);
 
 struct Mutation {
-    static constexpr float MaxMutationIncrement = 0.1;
-    static constexpr float MutationProbability = 0.05;
+    static constexpr float MaxMutationIncrement = 0.02;
+    static constexpr float MutationProbability = 0.1;
     
     float SubstractionProbability;
     float AdditionProbability;
